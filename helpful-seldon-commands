@@ -1,0 +1,1 @@
+minikube start --nodes=2 --cpus=6 --memory 30000  # dedicate more resources to minikube 

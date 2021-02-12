@@ -13,7 +13,7 @@ If you've tried installing seldon you know the instructions are unhelpful and th
 7. Might not be needed, but run `helm repo list` and `helm repo update`
 8. Install ambassador with helm: `helm install ambassador datawire/ambassador --set image.repository=quay.io/datawire/ambassador --set enableAES=false --set crds.keep=false --namespace seldon-system`
 9. Install seldon-core with helm: `helm install seldon-core seldon-core-operator --repo https://storage.googleapis.com/seldon-charts --set ambassador.enabled=true --set usageMetrics.enabled=true --namespace seldon-system`
-10. Run this on a separate terminal; here we start port forwarding: `kubectl port-forward $(kubectl get pods -n seldon-system -l app.kubernetes.io/name=ambassador -o jsonpath='{.items[0].metadata.name}') -n seldon-system 8003:8080`. Now we can use localhost:8003 for our model predictions
+10. Run this on a separate terminal; here we start port forwarding: `kubectl port-forward $(kubectl get pods -n seldon-system -l app.kubernetes.io/name=ambassador -o jsonpath='{.items[0].metadata.name}') -n seldon-system 8003:8080`. Now we can use localhost:8003 for our model predictions. Note this might take a few seconds to start up
 11. Now create the seldon namespace: `kubectl create namespace seldon`
 12. Run `kubectl config set-context $(kubectl config current-context) --namespace=seldon`
 13. At this point, this is the standard set of instructions for most seldon example deployments. This repo contains the sample sklearn iris model for reference, so we run `kubectl create -f sklearn_iris.yaml`
