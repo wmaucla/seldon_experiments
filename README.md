@@ -2,6 +2,36 @@
 
 If you've tried installing seldon you know the instructions are unhelpful and the docs are poor. This acts as a minimally viable set of instructions in order to get Seldon running locally on a simple example from their example list.
 
+
+## Updated Guide
+
+1. Install kustomize, kubectl, minikube
+2. `git clone` the kubeflow manifests repo [here](https://github.com/kubeflow/manifests.git)
+3. `minikube start --driver=docker --nodes=2 --cpus=6 --memory 30000`  # dedicate more resources to minikube
+
+### Config
+
+`kubectl version`:
+
+Client Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.3", GitCommit:"2e7996e3e2712684bc73f0dec0200d64eec7fe40", GitTreeState:"clean", BuildDate:"2020-05-20T12:52:00Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"25", GitVersion:"v1.25.3", GitCommit:"434bfd82814af038ad94d62ebe59b133fcb50506", GitTreeState:"clean", BuildDate:"2022-10-12T10:49:09Z", GoVersion:"go1.19.2", Compiler:"gc", Platform:"linux/amd64"}
+
+`minikube version`:
+
+minikube version: v1.28.0
+commit: 986b1ebd987211ed16f8cc10aed7d2c42fc8392f
+
+`kustomize version`:
+
+{Version:kustomize/v4.5.7 GitCommit:56d82a8378dfc8dc3b3b1085e5a6e67b82966bd7 BuildDate:2022-08-02T16:35:54Z GoOs:linux GoArch:amd64}
+
+### Steps
+
+As of Dec 2022, based on the installation instructions mentioned [here](https://github.com/kubeflow/manifests#connect-to-your-kubeflow-cluster), these are the following steps run:
+
+
+1. Make sure in the `manifests` subfolder 
+
 ### Process
 
 1. Have Docker installed locally
