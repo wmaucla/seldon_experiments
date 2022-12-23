@@ -6,7 +6,7 @@ If you've tried installing seldon you know the instructions are unhelpful and th
 
 1. Have Docker installed locally
 2. Install Minikube locally
-3. `minikube start`, but note that you might want to make sure you have at least some CPU / free RAM to use to dedicate to running minikube
+3. `minikube start --driver=docker`, but note that you might want to make sure you have at least some CPU / free RAM to use to dedicate to running minikube
 4. If you haven't already, you'll also need helm and kubectl installed locally
 5. Run `kubectl create namespace seldon-system`
 6. Beginning to do helm installs; run `helm repo add datawire https://www.getambassador.io`; using Ambassador for ingress vs Istio
