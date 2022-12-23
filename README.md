@@ -7,7 +7,7 @@ If you've tried installing seldon you know the instructions are unhelpful and th
 
 1. Install kustomize, kubectl, minikube
 2. `git clone` the kubeflow manifests repo [here](https://github.com/kubeflow/manifests.git)
-3. `minikube start --driver=docker --nodes=2 --cpus=6 --memory 30000`  # dedicate more resources to minikube
+3. `minikube start --driver=docker --nodes=2 --cpus=6 --memory 30000 --kubernetes-version=v1.21.1`  # dedicate more resources to minikube
 
 ### Config
 
@@ -23,14 +23,88 @@ commit: 986b1ebd987211ed16f8cc10aed7d2c42fc8392f
 
 `kustomize version`:
 
-{Version:kustomize/v4.5.7 GitCommit:56d82a8378dfc8dc3b3b1085e5a6e67b82966bd7 BuildDate:2022-08-02T16:35:54Z GoOs:linux GoArch:amd64}
+Manually installed from [here](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0), using binary
+
+Version: {KustomizeVersion:3.2.0 GitCommit:a3103f1e62ddb5b696daa3fd359bb6f2e8333b49 BuildDate:2019-09-18T16:26:36Z GoOs:linux GoArch:amd64}
+
 
 ### Steps
 
 As of Dec 2022, based on the installation instructions mentioned [here](https://github.com/kubeflow/manifests#connect-to-your-kubeflow-cluster), these are the following steps run:
 
+0.
+On linux, alias the kustomize version 3.2.0
+`alias kustomize=./kustomize_3.2.0_linux_amd64`
 
 1. Make sure in the `manifests` subfolder 
+
+```bash
+
+# Try this set twice, if connection refused error
+kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
+
+kustomize build common/istio-1-16/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-16/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-16/istio-install/base | kubectl apply -f -
+
+kustomize build common/dex/overlays/istio | kubectl apply -f -
+
+kustomize build common/oidc-authservice/base | kubectl apply -f -
+
+```
+
+At this point, run 
+
+```
+kubectl get pods -n cert-manager
+kubectl get pods -n istio-system
+kubectl get pods -n auth
+```
+
+and check pods are all up and running first
+
+
+```
+# Might see some errors here
+kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
+kustomize build common/istio-1-16/cluster-local-gateway/base | kubectl apply -f -
+
+kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+kustomize build common/kubeflow-roles/base | kubectl apply -f -
+
+kustomize build common/istio-1-16/kubeflow-istio-resources/base | kubectl apply -f -
+
+# Errors here, try twice
+kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+
+
+kustomize build contrib/kserve/kserve | kubectl apply -f -
+kustomize build contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+
+kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
+
+kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+
+
+kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+
+kustomize build apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
+
+kustomize build apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
+
+kustomize build common/user-namespace/base | kubectl apply -f -
+```
+
+
+Finally,
+
+`kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80` and view on localhost
+
 
 ### Process
 
