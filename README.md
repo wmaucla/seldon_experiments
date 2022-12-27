@@ -106,6 +106,71 @@ Finally,
 `kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80` and view on localhost
 
 
+### Seldon
+
+
+```bash
+minikube start --driver=docker --nodes=2 --cpus=6 --memory 30000 --kubernetes-version=v1.17.0
+```
+
+```bash
+kubectl create ns seldon
+kubectl label namespace seldon serving.kubeflow.org/inferenceservice=enabled
+
+kubectl create -n seldon -f seldon_example.yaml
+```
+
+Install kind
+
+```
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+```
+
+```
+kind create cluster --name seldon
+kubectl cluster-info --context kind-seldon
+```
+
+Install istio
+```
+curl -L https://istio.io/downloadIstio | sh -
+cd istio-1.11.4
+export PATH=$PWD/bin:$PATH
+```
+
+
+```
+istioctl install --set profile=demo -y
+kubectl label namespace default istio-injection=enabled
+```
+
+```
+kubectl apply -f - << END
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: seldon-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+END
+```
+
+```
+kubectl create namespace seldon-system
+```
+
+
 ### Process
 
 1. Have Docker installed locally
